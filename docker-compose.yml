@@ -10,6 +10,12 @@ services:
       - "3001:3001"
     environment:
       - PORT=3001
+      - DB_HOST=db
+      - DB_PORT=5432
+      - POSTGRES_USER=kanban
+      - POSTGRES_PASSWORD=kanban123
+      - POSTGRES_DB=kanban
+      - JWT_SECRET=kanban-jwt-secret-key
     networks:
       - kanban-network
     restart: unless-stopped
