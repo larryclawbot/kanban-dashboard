@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
@@ -7,12 +8,13 @@ export const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 // Add token to requests if available
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('token');
+    const token = Cookies.get('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -39,6 +41,33 @@ export const authApi = {
 
   login: async (email: string, password: string): Promise<AuthResponse> => {
     const { data } = await api.post<AuthResponse>('/auth/login', { email, password });
+    return data;
+  },
+};
+
+export const boardsApi = {
+  getAll: async () => {
+    const { data } = await api.get('/boards');
+    return data;
+  },
+
+  getOne: async (id: string) => {
+    const { data } = await api.get(`/boards/${id}`);
+    return data;
+  },
+
+  create: async (board: { name: string; description?: string }) => {
+    const { data } = await api.post('/boards', board);
+    return data;
+  },
+
+  update: async (id: string, board: Partial<{ name: string; description: string }>) => {
+    const { data } = await api.put(`/boards/${id}`, board);
+    return data;
+  },
+
+  delete: async (id: string) => {
+    const { data } = await api.delete(`/boards/${id}`);
     return data;
   },
 };
