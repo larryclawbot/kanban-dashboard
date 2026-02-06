@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, authApi } from '@/lib/api';
-import Cookies from 'js-cookie';
 
 interface AuthContextType {
   user: User | null;
@@ -22,21 +21,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Check for existing token on mount
-    const savedToken = Cookies.get('token');
+    const savedToken = localStorage.getItem('token');
     if (savedToken) {
       setToken(savedToken);
-      fetchUser();
+      fetchUser(savedToken);
     } else {
       setLoading(false);
     }
   }, []);
 
-  const fetchUser = async () => {
+  const fetchUser = async (authToken: string) => {
     try {
-      const userData = await authApi.getProfile();
-      setUser(userData);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/users/me`, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+        },
+      });
+      
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+      } else {
+        localStorage.removeItem('token');
+        setToken(null);
+      }
     } catch {
-      Cookies.remove('token');
+      localStorage.removeItem('token');
       setToken(null);
     } finally {
       setLoading(false);
@@ -45,20 +55,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const response = await authApi.login(email, password);
-    Cookies.set('token', response.access_token, { expires: 7 });
+    localStorage.setItem('token', response.access_token);
     setToken(response.access_token);
     setUser(response.user);
   };
 
   const register = async (email: string, password: string, name: string) => {
     const response = await authApi.register(email, password, name);
-    Cookies.set('token', response.access_token, { expires: 7 });
+    localStorage.setItem('token', response.access_token);
     setToken(response.access_token);
     setUser(response.user);
   };
 
   const logout = () => {
-    Cookies.remove('token');
+    localStorage.removeItem('token');
     setToken(null);
     setUser(null);
   };

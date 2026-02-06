@@ -12,11 +12,7 @@ export const api = axios.create({
 // Add token to requests if available
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
-    const token = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('token='))
-      ?.split('=')[1];
-    
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -43,11 +39,6 @@ export const authApi = {
 
   login: async (email: string, password: string): Promise<AuthResponse> => {
     const { data } = await api.post<AuthResponse>('/auth/login', { email, password });
-    return data;
-  },
-
-  getProfile: async (): Promise<User> => {
-    const { data } = await api.get<User>('/users/me');
     return data;
   },
 };
