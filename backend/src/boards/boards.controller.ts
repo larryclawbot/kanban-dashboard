@@ -14,12 +14,11 @@ export class BoardsController {
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
-  async findById(@Param('id') id: string) {
-    const board = await this.boardsService.findById(id);
-    if (!board) {
-      throw new Error('Board not found');
-    }
-    return board;
+  async findById(
+    @Param('id') id: string,
+    @Request() req: { user: { id: string } },
+  ) {
+    return this.boardsService.findByIdWithOwnerCheck(id, req.user.id);
   }
 
   @Post()
@@ -35,15 +34,19 @@ export class BoardsController {
   @UseGuards(JwtAuthGuard)
   async update(
     @Param('id') id: string,
+    @Request() req: { user: { id: string } },
     @Body() body: { name?: string; description?: string },
   ) {
-    return this.boardsService.update(id, body);
+    return this.boardsService.update(id, req.user.id, body);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  async delete(@Param('id') id: string) {
-    const result = await this.boardsService.delete(id);
+  async delete(
+    @Param('id') id: string,
+    @Request() req: { user: { id: string } },
+  ) {
+    const result = await this.boardsService.delete(id, req.user.id);
     return { success: result };
   }
 }

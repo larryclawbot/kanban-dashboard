@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { BoardRepository, Board, InsertBoard } from '@app/database';
 
 @Injectable()
@@ -16,6 +16,17 @@ export class BoardsService {
     return board ?? null;
   }
 
+  async findByIdWithOwnerCheck(id: string, userId: string): Promise<Board> {
+    const board = await this.boardRepository.findById(id);
+    if (!board) {
+      throw new NotFoundException('Board not found');
+    }
+    if (board.userId !== userId) {
+      throw new ForbiddenException('You do not have access to this board');
+    }
+    return board;
+  }
+
   async create(userId: string, data: { name: string; description?: string }): Promise<Board> {
     const insertBoard: InsertBoard = {
       name: data.name,
@@ -25,12 +36,17 @@ export class BoardsService {
     return this.boardRepository.create(insertBoard);
   }
 
-  async update(id: string, data: { name?: string; description?: string }): Promise<Board | null> {
-    const board = await this.boardRepository.update(id, data);
-    return board ?? null;
+  async update(id: string, userId: string, data: { name?: string; description?: string }): Promise<Board> {
+    const board = await this.findByIdWithOwnerCheck(id, userId);
+    const updated = await this.boardRepository.update(id, data);
+    if (!updated) {
+      throw new NotFoundException('Board not found');
+    }
+    return updated;
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string, userId: string): Promise<boolean> {
+    await this.findByIdWithOwnerCheck(id, userId);
     return this.boardRepository.delete(id);
   }
 }

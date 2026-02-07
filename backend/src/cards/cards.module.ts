@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { CardsController } from './cards.controller';
 import { CardsService } from './cards.service';
-import { CardRepository } from '@app/database';
+import { CardRepository, ColumnRepository, BoardRepository } from '@app/database';
 
 @Module({
   providers: [
     CardsService,
     CardRepository,
+    ColumnRepository,
+    BoardRepository,
   ],
   controllers: [CardsController],
   exports: [CardsService],
