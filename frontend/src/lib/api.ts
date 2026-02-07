@@ -71,3 +71,87 @@ export const boardsApi = {
     return data;
   },
 };
+
+export interface Column {
+  id: string;
+  name: string;
+  position: number;
+  boardId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const columnsApi = {
+  getAll: async (boardId: string) => {
+    const { data } = await api.get('/columns', { params: { boardId } });
+    return data;
+  },
+
+  getOne: async (id: string) => {
+    const { data } = await api.get(`/columns/${id}`);
+    return data;
+  },
+
+  create: async (column: { boardId: string; name: string; position?: number }) => {
+    const { data } = await api.post('/columns', column);
+    return data;
+  },
+
+  update: async (id: string, column: Partial<{ name: string; position: number }>) => {
+    const { data } = await api.put(`/columns/${id}`, column);
+    return data;
+  },
+
+  delete: async (id: string) => {
+    const { data } = await api.delete(`/columns/${id}`);
+    return data;
+  },
+
+  move: async (id: string, data: { position: number }) => {
+    const response = await api.put(`/columns/${id}/move`, data);
+    return response.data;
+  },
+};
+
+export interface Card {
+  id: string;
+  title: string;
+  description?: string;
+  position: number;
+  columnId: string;
+  dueDate?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const cardsApi = {
+  getAll: async (columnId: string) => {
+    const { data } = await api.get('/cards', { params: { columnId } });
+    return data;
+  },
+
+  getOne: async (id: string) => {
+    const { data } = await api.get(`/cards/${id}`);
+    return data;
+  },
+
+  create: async (card: { columnId: string; title: string; description?: string; position?: number; dueDate?: string }) => {
+    const { data } = await api.post('/cards', card);
+    return data;
+  },
+
+  update: async (id: string, card: Partial<{ title: string; description: string; position: number; dueDate: string }>) => {
+    const { data } = await api.put(`/cards/${id}`, card);
+    return data;
+  },
+
+  delete: async (id: string) => {
+    const { data } = await api.delete(`/cards/${id}`);
+    return data;
+  },
+
+  move: async (id: string, data: { columnId?: string; position?: number }) => {
+    const response = await api.put(`/cards/${id}/move`, data);
+    return response.data;
+  },
+};

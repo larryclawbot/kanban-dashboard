@@ -25,10 +25,11 @@ class LoginDto {
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @Post('register')
   async register(@Body() body: RegisterDto) {
+    console.dir(body, { depth: null });
     return this.authService.register(body);
   }
 
