@@ -1,13 +1,12 @@
 import { Injectable, ConflictException } from '@nestjs/common';
-import { UserRepository } from '../database/repositories/user.repository';
-import { User, InsertUser } from '../database/schema';
+import { UserRepository, User, InsertUser } from '@app/database';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(
     private userRepository: UserRepository,
-  ) {}
+  ) { }
 
   async findOne(id: string): Promise<User | null> {
     const user = await this.userRepository.findById(id);
