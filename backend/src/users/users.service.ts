@@ -1,22 +1,23 @@
 import { Injectable, ConflictException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from './user.entity';
+
+import { User, InsertUser } from '../../libs/database/src/schema';
 import * as bcrypt from 'bcrypt';
+import { UserRepository } from '@app/database';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
-  ) {}
+    private userRepository: UserRepository,
+  ) { }
 
   async findOne(id: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findById(id);
+    return user ?? null;
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findByEmail(email);
+    return user ?? null;
   }
 
   async create(userData: { email: string; password: string; name: string }): Promise<User> {
@@ -26,12 +27,13 @@ export class UsersService {
     }
 
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    const user = this.usersRepository.create({
-      ...userData,
+    const insertUser: InsertUser = {
+      email: userData.email,
       password: hashedPassword,
-    });
+      name: userData.name,
+    };
 
-    return this.usersRepository.save(user);
+    return this.userRepository.create(insertUser);
   }
 
   async validatePassword(user: User, password: string): Promise<boolean> {
