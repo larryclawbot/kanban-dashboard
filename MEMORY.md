@@ -77,10 +77,14 @@ Full-stack Kanban board application being built incrementally.
 
 ## Current Status
 
-### Phase 4.5.2: Frontend Drag & Drop UI - NOT STARTED (Reset)
-- Backend move endpoints ready
-- @dnd-kit installed
-- UI implementation reset - needs to be rebuilt
+### Phase 4.5.2: Frontend Drag & Drop UI ✅ (COMPLETED)
+- Board list page at /boards with create board functionality
+- Board detail page at /boards/[id] with draggable columns and cards
+- @dnd-kit integration for horizontal column reordering
+- @dnd-kit integration for card moving between/within columns
+- Optimistic UI updates during drag with API sync on drop
+- Sortable Column and Card components
+- BoardCard component for board list
 
 ### Frontend Hooks Available
 - `useBoards`, `useCreateBoard`, `useUpdateBoard`, `useDeleteBoard`
@@ -187,10 +191,23 @@ docker compose up -d
 
 ## Next Steps
 
-1. Rebuild Phase 4.5.2: Frontend Drag & Drop UI
-   - Board list view with draggable columns
-   - Column view with draggable cards
-   - Use @dnd-kit for drag functionality
-   - Connect to move endpoints (PUT /columns/:id/move, PUT /cards/:id/move)
-   - Components needed: Board, Column, Card (sortable)
-   - Pages needed: /boards (list), /boards/[id] (board view)
+### Potential Enhancements (Not Planned)
+1. **Board Management** - Edit board name/description inline
+2. **Column Management** - Rename column, delete column with confirmation
+3. **Card Management** - Edit card title/description inline, delete with confirmation
+4. **Due Dates** - Date picker for card due dates with visual indicators
+5. **Card Details Modal** - Full card view with description (rich text?), comments, etc.
+6. **Board Sharing** - Share boards with other users (collaboration)
+7. **Dark Mode** - Already has some dark mode classes, could be fully implemented
+8. **Mobile Responsiveness** - Horizontal scroll vs vertical column layout
+9. **Search/Filter** - Search cards, filter by due date, etc.
+10. **Activity/History** - Track changes to cards/columns
+
+### What's Completed
+- ✅ Authentication (Register, Login, JWT)
+- ✅ Boards CRUD
+- ✅ Columns CRUD
+- ✅ Cards CRUD
+- ✅ Drag & Drop (Columns & Cards)
+- ✅ Ownership & Permissions
+- ✅ Docker Deployment

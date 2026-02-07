@@ -5,7 +5,7 @@ export function useCards(columnId: string) {
   return useQuery({
     queryKey: ['cards', columnId],
     queryFn: () => cardsApi.getAll(columnId),
-    enabled: !!columnId,
+    enabled: !!columnId && typeof window !== 'undefined',
   });
 }
 
@@ -13,7 +13,7 @@ export function useCard(id: string) {
   return useQuery({
     queryKey: ['cards', 'single', id],
     queryFn: () => cardsApi.getOne(id),
-    enabled: !!id,
+    enabled: !!id && typeof window !== 'undefined',
   });
 }
 

@@ -14,6 +14,7 @@ export function useBoards() {
   return useQuery({
     queryKey: ['boards'],
     queryFn: () => boardsApi.getAll(),
+    enabled: typeof window !== 'undefined',
   });
 }
 
@@ -21,7 +22,7 @@ export function useBoard(id: string) {
   return useQuery({
     queryKey: ['boards', id],
     queryFn: () => boardsApi.getOne(id),
-    enabled: !!id,
+    enabled: !!id && typeof window !== 'undefined',
   });
 }
 

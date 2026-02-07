@@ -1,7 +1,9 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+// Use different URLs for client vs server
+const isServer = typeof window === 'undefined';
+const API_URL = isServer ? 'http://host.docker.internal:3001' : 'http://localhost:3001';
 
 export const api = axios.create({
   baseURL: API_URL,

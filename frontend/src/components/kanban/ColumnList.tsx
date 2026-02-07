@@ -1,14 +1,13 @@
 'use client';
 
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Column as ColumnType, Card as CardType } from '@/lib/api';
 import { KanbanColumn } from './Column';
-import { useCreateColumn } from '@/hooks/useColumns';
+import { useCreateColumn, useColumns } from '@/hooks/useColumns';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Form } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -29,14 +28,14 @@ interface ColumnListProps {
 
 export function ColumnList({
   boardId,
-  columns,
-  cards,
+  columns = [],
+  cards = {},
   onAddColumn,
 }: ColumnListProps) {
   const columnIds = useMemo(() => columns.map((c) => c.id), [columns]);
 
   return (
-    <div className="flex gap-4 overflow-x-auto pb-4 h-full">
+    <div className="flex gap-4 overflow-x-auto pb-4 h-full min-h-[200px]">
       <SortableContext items={columnIds} strategy={horizontalListSortingStrategy}>
         {columns
           .sort((a, b) => a.position - b.position)
@@ -75,7 +74,7 @@ function AddColumnButton({ boardId, onAdd }: AddColumnButtonProps) {
       await createColumn.mutateAsync({
         boardId,
         name: data.name,
-        position: (columns.data?.length || 0),
+        position: (columns?.data?.length || 0),
       });
       setIsAdding(false);
       form.reset();
@@ -136,7 +135,3 @@ function AddColumnButton({ boardId, onAdd }: AddColumnButtonProps) {
     </div>
   );
 }
-
-import { useState } from 'react';
-import { Form } from '@/components/ui/form';
-import { useColumns } from '@/hooks/useColumns';

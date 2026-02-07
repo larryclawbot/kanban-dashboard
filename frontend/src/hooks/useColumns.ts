@@ -5,7 +5,7 @@ export function useColumns(boardId: string) {
   return useQuery({
     queryKey: ['columns', boardId],
     queryFn: () => columnsApi.getAll(boardId),
-    enabled: !!boardId,
+    enabled: !!boardId && typeof window !== 'undefined',
   });
 }
 
@@ -13,7 +13,7 @@ export function useColumn(id: string) {
   return useQuery({
     queryKey: ['columns', 'single', id],
     queryFn: () => columnsApi.getOne(id),
-    enabled: !!id,
+    enabled: !!id && typeof window !== 'undefined',
   });
 }
 
