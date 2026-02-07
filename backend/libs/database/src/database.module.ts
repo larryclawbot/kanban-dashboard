@@ -22,4 +22,4 @@ import { CardRepository } from './repositories/card.repository';
     CardRepository,
   ],
 })
-export class DatabaseModule { }
+export class DatabaseModule {}
