@@ -46,6 +46,15 @@ export class ColumnsService {
     return this.columnRepository.delete(id);
   }
 
+  async move(id: string, userId: string, data: { position: number }): Promise<Column> {
+    const column = await this.findById(id, userId);
+    const updated = await this.columnRepository.update(id, { position: data.position });
+    if (!updated) {
+      throw new NotFoundException('Column not found');
+    }
+    return updated;
+  }
+
   private async checkBoardOwnership(boardId: string, userId: string): Promise<void> {
     const board = await this.boardRepository.findById(boardId);
     if (!board) {

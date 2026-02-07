@@ -55,4 +55,14 @@ export class ColumnsController {
     const result = await this.columnsService.delete(id, req.user.id);
     return { success: result };
   }
+
+  @Put(':id/move')
+  @UseGuards(JwtAuthGuard)
+  async move(
+    @Param('id') id: string,
+    @Request() req: { user: { id: string } },
+    @Body() body: { position: number },
+  ) {
+    return this.columnsService.move(id, req.user.id, body);
+  }
 }

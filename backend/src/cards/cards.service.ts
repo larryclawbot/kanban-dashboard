@@ -49,6 +49,29 @@ export class CardsService {
     return this.cardRepository.delete(id);
   }
 
+  async move(id: string, userId: string, data: { columnId?: string; position?: number }): Promise<Card> {
+    const card = await this.findById(id, userId);
+    
+    // If moving to a different column, check ownership of that column too
+    if (data.columnId && data.columnId !== card.columnId) {
+      await this.checkColumnOwnership(data.columnId, userId);
+    }
+    
+    const updateData: Partial<InsertCard> = {};
+    if (data.columnId !== undefined) {
+      updateData.columnId = data.columnId;
+    }
+    if (data.position !== undefined) {
+      updateData.position = data.position;
+    }
+    
+    const updated = await this.cardRepository.update(id, updateData);
+    if (!updated) {
+      throw new NotFoundException('Card not found');
+    }
+    return updated;
+  }
+
   private async checkColumnOwnership(columnId: string, userId: string): Promise<void> {
     const column = await this.columnRepository.findById(columnId);
     if (!column) {

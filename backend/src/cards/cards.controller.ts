@@ -55,4 +55,14 @@ export class CardsController {
     const result = await this.cardsService.delete(id, req.user.id);
     return { success: result };
   }
+
+  @Put(':id/move')
+  @UseGuards(JwtAuthGuard)
+  async move(
+    @Param('id') id: string,
+    @Request() req: { user: { id: string } },
+    @Body() body: { columnId?: string; position?: number },
+  ) {
+    return this.cardsService.move(id, req.user.id, body);
+  }
 }
